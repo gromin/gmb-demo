@@ -3,6 +3,32 @@ import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      greeting: null
+    }
+  }
+
+  componentDidMount() {
+    fetch('/me')
+      .then(response => response.text())
+      .then(response => this.setState({greeting: response}));
+  }
+
+  greeting() {
+    if (this.state.greeting) {
+      return (
+        <p className="App-intro">
+          {this.state.greeting}
+        </p>
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
   render() {
     return (
       <div className="App">
@@ -10,8 +36,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
+        { this.greeting() }
         <p className="App-intro">
-          Hey! To get started, edit <code>src/App.js</code> and save to reload.
+          To get started, edit <code>src/App.js</code> and save to reload.
         </p>
       </div>
     );
