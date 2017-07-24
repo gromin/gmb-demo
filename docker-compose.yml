@@ -1,7 +1,7 @@
 version: '2'
 services:
-  redis:
-    image: "redis:alpine"
+  # redis:
+  #   image: "redis:alpine"
   backend:
     build: ./server
     ports:
@@ -9,8 +9,8 @@ services:
     volumes:
      - ./server:/app
      - /app/node_modules
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     command: ["node", "server.js"]
   frontend:
     build: ./client
