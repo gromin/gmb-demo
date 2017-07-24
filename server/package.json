@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hapi": "^16.5.0"
+    "faker": "^4.1.0",
+    "hapi": "^16.5.0",
+    "nes": "^6.4.3"
   }
 }
