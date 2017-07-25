@@ -1,11 +1,14 @@
-import { combineReducers } from 'redux';
-import { Reducers as gridReducers } from 'react-redux-grid';
+import { combineReducers } from 'redux'
 
-const idReducer = (state = [], payload) => state;
+import { greeting, socketGreeting } from './greetings'
+import { machines } from './machines'
+import { Reducers as gridReducers } from 'react-redux-grid'
 
 const rootReducer = combineReducers({
-  idReducer,
+  greeting,
+  socketGreeting,
+  machines,
   ...gridReducers
-});
+})
 
-export default rootReducer;
+export default rootReducer
