@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { Grid } from 'react-redux-grid';
 import './App.css';
 
 const Nes = require('nes');
@@ -9,7 +9,8 @@ class App extends Component {
     super(props)
     this.state = {
       greeting: null,
-      socketGreeting: null
+      socketGreeting: null,
+      machines: []
     }
     this.onSocketUpdate = this.onSocketUpdate.bind(this);
   }
@@ -33,6 +34,12 @@ class App extends Component {
     fetch('/api/greet/user')
       .then(response => response.text())
       .then(response => this.setState({greeting: response}));
+
+    fetch('/api/machines')
+      .then(response => response.json())
+      .then(response => {
+        this.setState({machines: Object.values(response)})
+      });
   }
 
   onSocketSubscribe(err) {}
@@ -67,18 +74,59 @@ class App extends Component {
     }
   }
 
+  // Grid
+
+  gridWrapper() {
+    if (this.state.machines.length > 0) {
+      return (
+        <Grid stateKey='machines-grid'
+              data={this.state.machines}
+              columns={this.gridWrapperColumns()}
+              plugins={ {EDITOR: {type: 'inline', enabled: true, focusOnEdit: true}, SELECTION_MODEL: {editEvent: 'doubleclick'}} } />
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  gridWrapperColumns() {
+    return [
+      {
+        name: 'id',
+        dataIndex: 'id',
+        sortable: true,
+        editable: false
+      },
+      {
+        name: 'Machine name',
+        dataIndex: 'name',
+        sortable: true,
+        editable: true,
+        editor: '<input type="text" required />'
+      },
+      {
+        name: 'IP',
+        dataIndex: 'ip',
+        sortable: true,
+        editable: false
+      },
+      {
+        name: 'Owner',
+        dataIndex: 'owner',
+        sortable: true,
+        editable: true,
+        editor: '<input type="text" required />'
+      }
+    ];
+  }
+
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
         { this.greeting() }
         { this.socketGreeting() }
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        { this.gridWrapper() }
       </div>
     );
   }
