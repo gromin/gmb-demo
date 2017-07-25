@@ -99,7 +99,7 @@ server.register([Nes], function(err) {
         }
         console.log(`Server running at: ${server.info.uri}`);
 
-        const machines = new MachinesDb(10);
+        const machines = new MachinesDb(1000);
         server.machines = machines;
 
         machines.on('add', (machine) => {
