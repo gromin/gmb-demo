@@ -52,10 +52,30 @@ class MachinesGrid extends Component {
     }
   }
 
+  gridRecords() {
+    const { machines, searchString } = this.props
+
+    if (searchString.length === 0) {
+      return machines
+    }
+    else {
+      return machines.filter((machine) => {
+        const { id, ip, name, owner } = machine
+        return (
+          id.toString().indexOf(searchString) !== -1 ||
+          ip.toString().indexOf(searchString) !== -1 ||
+          name.toString().indexOf(searchString) !== -1 ||
+          owner.toString().indexOf(searchString) !== -1
+        )
+      })
+    }
+    
+  }
+
   render() {
     return (
       <Grid stateKey='machines-grid'
-            data={this.props.machines}
+            data={this.gridRecords()}
             columns={this.gridColumns()}
             plugins={this.gridPlugins()}
             events={this.gridEvents()} />
@@ -63,7 +83,7 @@ class MachinesGrid extends Component {
   }
 
   onEditSave({values}) {
-    this.props.saveMachine(values)
+    this.props.onSaveMachine(values)
   }
 }
 

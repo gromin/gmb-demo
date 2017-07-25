@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import {
   loadMachines,
   updateGreeting,
-  updateMachine
+  updateMachine,
+  updateSearch
 } from './actions'
 
-import { MachinesGrid } from './components/machinesGrid';
 import { Greeting } from './components/greeting';
+import { SearchBar } from './components/searchBar';
+import { MachinesGrid } from './components/machinesGrid';
 
 import './App.css';
 
@@ -20,7 +22,8 @@ class App extends Component {
     this.onSocketConnect = this.onSocketConnect.bind(this)
     this.onSocketSubscribe = this.onSocketSubscribe.bind(this)
     this.onSocketUpdate = this.onSocketUpdate.bind(this)
-    this.saveMachine = this.saveMachine.bind(this)
+    this.onSaveMachine = this.onSaveMachine.bind(this)
+    this.onSearchBarChange = this.onSearchBarChange.bind(this)
   }
 
   componentDidMount() {
@@ -31,6 +34,7 @@ class App extends Component {
   connectToApi() {
     const { dispatch, updateGreeting } = this.props
 
+    // TODO async action
     dispatch(updateGreeting('Waiting...', 'fromApi'))
     fetch('/api/greet/user')
       .then(response => response.text())
@@ -44,6 +48,7 @@ class App extends Component {
   connectToWebsocket() {
     const { dispatch, updateGreeting } = this.props
 
+    // TODO async action
     dispatch(updateGreeting('Connecting to websocket...', 'fromWebsocket'))
 
     this.socketClient = new Nes.Client('ws://localhost:3000/ws')
@@ -72,10 +77,16 @@ class App extends Component {
     dispatch(updateMachine(update))
   }
 
-  saveMachine(machine) {
+  onSaveMachine(machine) {
     const {id, name, owner} = machine
 
     fetch(`/api/machines/${id}`, {method: 'PUT', body: JSON.stringify({id, name, owner})})
+  }
+
+  onSearchBarChange(value) {
+    const { dispatch, updateSearch} = this.props
+
+    dispatch(updateSearch(value))
   }
 
   render() {
@@ -83,18 +94,20 @@ class App extends Component {
       <div className="App">
         <Greeting text={this.props.greeting.fromApi} />
         <Greeting text={this.props.greeting.fromWebsocket} />
-        <MachinesGrid machines={this.props.machines} saveMachine={this.saveMachine} />
+        <SearchBar onChange={this.onSearchBarChange} />
+        <MachinesGrid machines={this.props.machines} searchString={this.props.search} onSaveMachine={this.onSaveMachine} />
       </div>
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { greeting, socketGreeting, machines } = state
+  const { greeting, socketGreeting, machines, search } = state
   return {
     greeting,
     socketGreeting,
-    machines
+    machines,
+    search
   }
 }
 
@@ -103,7 +116,8 @@ const mapDispatchToProps = dispatch => {
     dispatch,
     loadMachines,
     updateGreeting,
-    updateMachine
+    updateMachine,
+    updateSearch
   }
 }
 
