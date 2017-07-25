@@ -6,13 +6,6 @@ export function updateGreeting(greeting, channel = 'main') {
   }
 }
 
-export function updateSocketGreeting(greeting) {
-  return {
-    type: 'UPDATE_SOCKET_GREETING',
-    greeting
-  }
-}
-
 export function loadMachines(machines) {
   return {
     type: 'MACHINES_LOAD',
