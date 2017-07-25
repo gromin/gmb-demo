@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import { Grid } from 'react-redux-grid';
 
 class MachinesGrid extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   gridColumns() {
     return [
       {

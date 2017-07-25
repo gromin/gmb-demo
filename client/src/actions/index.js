@@ -1,7 +1,8 @@
-export function updateGreeting(greeting) {
+export function updateGreeting(greeting, channel = 'main') {
   return {
     type: 'UPDATE_GREETING',
-    greeting: greeting
+    channel,
+    greeting
   }
 }
 

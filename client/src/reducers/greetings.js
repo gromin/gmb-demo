@@ -1,22 +1,12 @@
-export const greeting = (state = 'Hello unknown', action) => {
+export const greeting = (state = {main: ''}, action) => {
 
   switch (action.type) {
 
     case 'UPDATE_GREETING':
-      return action.greeting
-
-    default:
-      return state
-  }
-}
-
-
-export const socketGreeting = (state = 'No echo from websocket', action) => {
-
-  switch (action.type) {
-
-    case 'UPDATE_SOCKET_GREETING':
-      return action.greeting
+      return {
+        ...state,
+        [action.channel || 'main']: action.greeting
+      }
 
     default:
       return state
