@@ -21,7 +21,7 @@ Changes made to records in one browser should be seen immediately in another.
 
 There is no conflict resolution -- last write always wins.
 
-Search is local with brute-force, therefore somewhat slow on ~1000 machines.
+Search is local with brute-force, therefore somewhat slow on ~1000 machines. Same for sorting.
 
 Data is random and generated on every server restart by faker.
 
@@ -40,3 +40,4 @@ Data is random and generated on every server restart by faker.
 * Remote search or smart local search
 * Editable card for each record on doubleclick
 * Persistent store (redis? mongo? postgres?)
+* Prettify UI and add loading states
