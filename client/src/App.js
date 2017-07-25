@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { updateGreeting, updateSocketGreeting, loadMachines } from './actions'
+import {
+  loadMachines,
+  updateGreeting,
+  updateMachine,
+  updateSocketGreeting
+} from './actions'
 
 import { MachinesGrid } from './components/machinesGrid';
 
@@ -12,7 +17,8 @@ const Nes = require('nes');
 class App extends Component {
   constructor(props) {
     super(props)
-    this.onSocketUpdate = this.onSocketUpdate.bind(this);
+    this.onSocketUpdate = this.onSocketUpdate.bind(this)
+    this.saveMachine = this.saveMachine.bind(this)
   }
 
   componentDidMount() {
@@ -24,14 +30,14 @@ class App extends Component {
     this.socketClient
         .connect((err) => {
           this.socketClient.request('/ws', (err, payload) => {
-            dispatch(updateSocketGreeting(payload));
+            dispatch(updateSocketGreeting(payload))
           });
         });
 
     this.socketClient
         .subscribe('/ws/machines',
                    this.onSocketUpdate,
-                   this.onSocketSubscribe);
+                   this.onSocketSubscribe)
 
     dispatch(updateGreeting('Waiting...'))
     fetch('/api/greet/user')
@@ -46,7 +52,13 @@ class App extends Component {
   onSocketSubscribe(err) {}
 
   onSocketUpdate(update, flags) {
-    console.log(update);
+    const { dispatch, updateMachine } = this.props
+    dispatch(updateMachine(update))
+  }
+
+  saveMachine(machine) {
+    const {id, name, owner} = machine
+    fetch(`/api/machines/${id}`, {method: 'PUT', body: JSON.stringify({id, name, owner})})
   }
 
   greeting() {
@@ -69,11 +81,12 @@ class App extends Component {
 
   render() {
     const { machines } = this.props
+
     return (
       <div className="App">
         { this.greeting() }
         { this.socketGreeting() }
-        <MachinesGrid machines={machines} />
+        <MachinesGrid machines={machines} saveMachine={this.saveMachine} />
       </div>
     );
   }
@@ -91,9 +104,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     dispatch,
+    loadMachines,
     updateGreeting,
-    updateSocketGreeting,
-    loadMachines
+    updateMachine,
+    updateSocketGreeting
   }
 }
 

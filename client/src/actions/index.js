@@ -21,7 +21,7 @@ export function loadMachines(machines) {
 
 export function updateMachine(machine) {
   return {
-    type: 'MACHINES_LOAD',
+    type: 'MACHINE_UPDATE',
     id: machine.id,
     machine: machine
   }

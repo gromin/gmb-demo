@@ -50,13 +50,24 @@ class MachinesGrid extends Component {
     }
   }
 
+  gridEvents() {
+    return {
+      HANDLE_AFTER_INLINE_EDITOR_SAVE: this.onEditSave.bind(this)
+    }
+  }
+
   render() {
     return (
       <Grid stateKey='machines-grid'
             data={this.props.machines}
             columns={this.gridColumns()}
-            plugins={this.gridPlugins()} />
+            plugins={this.gridPlugins()}
+            events={this.gridEvents()} />
     )
+  }
+
+  onEditSave({values}) {
+    this.props.saveMachine(values)
   }
 }
 
