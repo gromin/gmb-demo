@@ -1,47 +1,80 @@
 import React, { Component } from 'react';
-import { Grid } from 'react-redux-grid';
+import { Grid, applyGridConfig } from 'react-redux-grid';
+
+import './MachinesGrid.css';
 
 class MachinesGrid extends Component {
+  constructor(props) {
+    super(props)
+    applyGridConfig({
+      CLASS_NAMES: {
+        CONTAINER: '',
+        TABLE: 'table xtable-condensed table-striped table-bordered table-hover',
+        // TABLE_CONTAINER: 'table-container',
+        // HEADER_FIXED_CONTAINER: 'hidden',
+        // HEADER: 'hidden',
+        HEADER_HIDDEN: 'header-hidden',
+        ROW: 'row-override',
+        CELL: 'text-left',
+        // COLUMN: 'column',
+        // PAGERTOOLBAR: 'text-right bootstrap-description',
+        // BUTTONS: {
+        //   PAGER: 'btn pull-left negative-margin'
+        // },
+        ERROR_HANDLER: {
+          CONTAINER: 'hidden'
+        }
+      },
+      CSS_PREFIX: ''
+    })
+  }
+
   gridColumns() {
     return [
       {
         name: 'id',
         dataIndex: 'id',
         sortable: true,
-        editable: false
+        editable: false,
+        width: '15%'
       },
       {
         name: 'Machine name',
         dataIndex: 'name',
         sortable: true,
         editable: true,
-        editor: '<input type="text" required />'
+        editor: '<input type="text" required />',
+        width: '20%'
       },
       {
         name: 'IP',
         dataIndex: 'ip',
         sortable: true,
-        editable: false
+        editable: false,
+        width: '25%'
       },
       {
         name: 'Owner',
         dataIndex: 'owner',
         sortable: true,
         editable: true,
-        editor: '<input type="text" required />'
+        editor: '<input type="text" required />',
+        width: '40%'
       }
     ];
   }
 
   gridPlugins() {
     return {
-      EDITOR: {
-        type: 'inline',
-        enabled: true,
-        focusOnEdit: true
-      },
+      // EDITOR: {
+      //   type: 'inline',
+      //   enabled: true,
+      //   focusOnEdit: true
+      // },
       SELECTION_MODEL: {
-        editEvent: 'doubleclick'
+        // editEvent: 'doubleclick',
+        activeCls: 'info',
+        allowDeselect: false
       }
     }
   }

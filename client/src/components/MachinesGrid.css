@@ -1,0 +1,25 @@
+.table {
+  width: 100%;
+}
+
+.header-fixed-container .header-fixed {
+  margin-bottom: -2px;
+}
+
+.header-fixed-container .header th:last-child {
+  display: none;
+}
+
+.header-hidden .header {
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.header-hidden .header th {
+  border: none;
+  line-height: 0;
+  padding: 0;
+}
