@@ -14,6 +14,7 @@
   "dependencies": {
     "nes": "^6.4.3",
     "react": "^15.6.1",
+    "react-bootstrap": "^0.31.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
     "react-redux-grid": "^5.4.0",
