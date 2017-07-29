@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import {
+  FormGroup,
+  InputGroup,
+  FormControl
+} from 'react-bootstrap';
 
 import './SearchBar.css'
 
@@ -14,10 +19,14 @@ class SearchBar extends Component {
 
   render() {
     return (
-      <input type="text"
-             className="SearchBar"
-             placeholder="Start typing..."
-             onChange={(e) => this.onChange(e.target.value)} />
+      <form>
+        <FormGroup>
+          <InputGroup>
+            <InputGroup.Addon>Search for:</InputGroup.Addon>
+            <FormControl type="text" onChange={(e) => this.onChange(e.target.value)} />
+          </InputGroup>
+        </FormGroup>
+      </form>
     )
   }
 }
