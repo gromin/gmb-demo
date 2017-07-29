@@ -8,6 +8,7 @@ import {
   updateSearch
 } from './actions'
 
+import { Grid, Col, Row } from 'react-bootstrap';
 import { Greeting } from './components/greeting';
 import { SearchBar } from './components/searchBar';
 import { MachinesGrid } from './components/machinesGrid';
@@ -89,13 +90,31 @@ class App extends Component {
     dispatch(updateSearch(value))
   }
 
+  isGridFullWidth() {
+    return true;
+  }
+
   render() {
     return (
-      <div className="App">
-        <Greeting text={this.props.greeting.fromApi} />
-        <Greeting text={this.props.greeting.fromWebsocket} />
-        <SearchBar onChange={this.onSearchBarChange} />
-        <MachinesGrid machines={this.props.machines} searchString={this.props.search} onSaveMachine={this.onSaveMachine} />
+      <div className="App container">
+        <Grid>
+          <Row>
+            <Col xs={12} md={12}>
+              <Greeting text={this.props.greeting.fromApi} />
+              <Greeting text={this.props.greeting.fromWebsocket} />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12}>
+              <SearchBar onChange={this.onSearchBarChange} />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={this.isGridFullWidth() ? 12 : 8}>
+              <MachinesGrid machines={this.props.machines} searchString={this.props.search} onSaveMachine={this.onSaveMachine} />
+            </Col>
+          </Row>
+        </Grid>
       </div>
     );
   }
