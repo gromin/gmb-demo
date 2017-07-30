@@ -8,7 +8,8 @@ function genFakeMachine(index) {
     ip: faker.internet.ip(),
     name: `dev-${index}`,
     owner: faker.name.findName(),
-    isOnline: faker.random.boolean()
+    isOnline: faker.random.boolean(),
+    description: ''
   }
 }
 

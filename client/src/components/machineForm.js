@@ -44,13 +44,19 @@ class MachineForm extends Component {
     this.props.onSaveMachine(this.state.machine)
   }
 
+  isReadOnly() {
+    return this.props.readOnly
+  }
+
   isUpdateDisabled() {
     const propsMachine = this.props.machine
     const stateMachine = this.state.machine
     return (
-      this.isSaving() ||
-      propsMachine.name === stateMachine.name &&
-      propsMachine.owner === stateMachine.owner
+      this.isSaving() || (
+        propsMachine.name === stateMachine.name &&
+        propsMachine.owner === stateMachine.owner &&
+        propsMachine.description === stateMachine.description
+      )
     )
   }
 
@@ -59,7 +65,6 @@ class MachineForm extends Component {
   }
 
   render() {
-    const { machine } = this.props
     return (
       <form onSubmit={this.onSubmit}>
         <FormGroup>
@@ -75,6 +80,7 @@ class MachineForm extends Component {
           <FormControl type="text"
                        value={this.state.machine.name}
                        placeholder='Machine Name'
+                       readOnly={this.isReadOnly()}
                        onChange={(e) => this.onChange(e, 'name')} />
         </FormGroup>
         <FormGroup>
@@ -82,6 +88,7 @@ class MachineForm extends Component {
           <FormControl type="text"
                        value={this.state.machine.owner}
                        placeholder='Owner'
+                       readOnly={this.isReadOnly()}
                        onChange={(e) => this.onChange(e, 'owner')} />
         </FormGroup>
         <FormGroup>
@@ -90,15 +97,19 @@ class MachineForm extends Component {
                        value={this.state.machine.description || ''}
                        placeholder='Description'
                        rows='8'
+                       readOnly={this.isReadOnly()}
                        onChange={(e) => this.onChange(e, 'description')} />
         </FormGroup>
-        <ButtonToolbar>
-          <Button bsStyle='primary'
-                  disabled={this.isUpdateDisabled()}
-                  type='submit'>
-                    {this.isSaving() ? 'Updating...' : 'Update'}
-          </Button>
-        </ButtonToolbar>
+        {!this.isReadOnly() ?
+          <ButtonToolbar>
+            <Button bsStyle='primary'
+                    disabled={this.isUpdateDisabled()}
+                    type='submit'>
+                      {this.isSaving() ? 'Updating...' : 'Update'}
+            </Button>
+          </ButtonToolbar>
+          :
+          null}
       </form>
     )
   }

@@ -1,3 +1,10 @@
+export function updateUserCanWrite(canWrite) {
+  return {
+    type: 'UPDATE_USER_CAN_WRITE',
+    canWrite: canWrite
+  }
+}
+
 export function updateGreeting(greeting, channel = 'main') {
   return {
     type: 'UPDATE_GREETING',

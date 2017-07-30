@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
+  updateUserCanWrite,
   loadMachines,
   updateGreeting,
   updateMachine,
@@ -11,6 +12,8 @@ import {
 
 import { Grid, Col, Row } from 'react-bootstrap';
 import { AutoAffix } from 'react-overlays';
+
+import { LoginForm } from './components/loginForm';
 import { Greeting } from './components/greeting';
 import { MachineForm } from './components/machineForm';
 import { MachinesGrid } from './components/machinesGrid';
@@ -33,22 +36,54 @@ class App extends Component {
     this.onSaveMachine = this.onSaveMachine.bind(this)
     this.onSearchBarChange = this.onSearchBarChange.bind(this)
     this.onRowSelect = this.onRowSelect.bind(this)
+
+    this.auth0 = new window.auth0.WebAuth({
+      domain: 'gromin.eu.auth0.com',
+      clientID: 'dzl4f7W9O0WoOq59BdhnvOYiEhnW1fJC',
+      redirectUri: 'http://localhost:3000',
+      responseType: 'token id_token',
+    })
   }
 
   componentDidMount() {
     this.connectToApi();
     this.connectToWebsocket();
+    if (this.isAuthorized()) {
+      this.getUserCanWrite()
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    // if (this.state.searchString !== nextProps.search) {
-    //   this.setState({
-    //     searchString: nextProps.search
-    //   })
-    // }
-    this.setState({
-      selectedMachine: this.selectedMachine(this.props.machines || [])
+  isAuthorized() {
+    this.checkAuthHash();
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+    return new Date().getTime() < expiresAt;
+  }
+
+  checkAuthHash() {
+    this.auth0.parseHash((err, authResult) => {
+      if (authResult && authResult.accessToken && authResult.idToken) {
+        window.location.hash = ''
+        this.setAuthSession(authResult)
+        window.location.reload()
+      }
     })
+  }
+
+  setAuthSession(authResult) {
+    var expiresAt = JSON.stringify(
+      authResult.expiresIn * 1000 + new Date().getTime()
+    );
+    localStorage.setItem('access_token', authResult.accessToken);
+    localStorage.setItem('id_token', authResult.idToken);
+    localStorage.setItem('expires_at', expiresAt);
+  }
+
+  getUserCanWrite() {
+    this.auth0.client.userInfo(localStorage.getItem('access_token'), (err, user) => {
+      if (user && user.app_metadata && user.app_metadata.role === 'writer') {
+        this.props.dispatch(updateUserCanWrite(true))
+      }
+    });
   }
 
   connectToApi() {
@@ -98,9 +133,9 @@ class App extends Component {
   }
 
   onSaveMachine(machine) {
-    const {id, name, owner} = machine
+    const {id, name, owner, description} = machine
 
-    fetch(`/api/machines/${id}`, {method: 'PUT', body: JSON.stringify({id, name, owner})})
+    fetch(`/api/machines/${id}`, {method: 'PUT', body: JSON.stringify({id, name, owner, description})})
   }
 
   onSearchBarChange(value) {
@@ -123,12 +158,16 @@ class App extends Component {
 
   selectedMachine(machines) {
     const selectedMachine = machines.find((machine) => machine.id === this.props.selectedMachine)
-    console.log(selectedMachine)
     return selectedMachine
   }
 
   render() {
     const selectedMachine = this.selectedMachine(this.props.machines)
+    if (!this.isAuthorized()) {
+      return (
+        <LoginForm />
+      )
+    }
     return (
       <div className="App">
         <div className="container">
@@ -161,7 +200,8 @@ class App extends Component {
                   <AutoAffix container={this} viewportOffsetTop={15}>
                     <div>
                       <MachineForm machine={selectedMachine}
-                                   onSaveMachine={this.onSaveMachine} />
+                                   onSaveMachine={this.onSaveMachine}
+                                   readOnly={!this.props.userCanWrite} />
                     </div>
                   </AutoAffix>
                 </Col>
@@ -176,8 +216,9 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { greeting, socketGreeting, machines, search, selectedMachine } = state
+  const { greeting, socketGreeting, machines, search, selectedMachine, userCanWrite } = state
   return {
+    userCanWrite,
     greeting,
     socketGreeting,
     machines,
@@ -189,8 +230,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     dispatch,
-    loadMachines,
     updateGreeting,
+    loadMachines,
     updateMachine,
     updateSelectedMachine,
     updateSearch
