@@ -23,6 +23,10 @@ const Nes = require('nes');
 class App extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      searchString: this.props.search,
+      selectedMachine: null
+    }
     this.onSocketConnect = this.onSocketConnect.bind(this)
     this.onSocketSubscribe = this.onSocketSubscribe.bind(this)
     this.onSocketUpdate = this.onSocketUpdate.bind(this)
@@ -34,6 +38,17 @@ class App extends Component {
   componentDidMount() {
     this.connectToApi();
     this.connectToWebsocket();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // if (this.state.searchString !== nextProps.search) {
+    //   this.setState({
+    //     searchString: nextProps.search
+    //   })
+    // }
+    this.setState({
+      selectedMachine: this.selectedMachine(this.props.machines || [])
+    })
   }
 
   connectToApi() {
@@ -101,15 +116,19 @@ class App extends Component {
   }
 
   isMachineSelected() {
-    return this.props.selectedMachine;
+    if (this.state.selectedMachine && this.state.selectedMachine._key) {
+      return this.state.selectedMachine;
+    }
   }
 
-  selectedMachine() {
-    const selectedMachine = this.props.machines.find((machine) => machine.id === this.props.selectedMachine)
+  selectedMachine(machines) {
+    const selectedMachine = machines.find((machine) => machine.id === this.props.selectedMachine)
+    console.log(selectedMachine)
     return selectedMachine
   }
 
   render() {
+    const selectedMachine = this.selectedMachine(this.props.machines)
     return (
       <div className="App">
         <div className="container">
@@ -130,16 +149,18 @@ class App extends Component {
               </Col>
             </Row>
             <Row>
-              <Col xs={this.isMachineSelected() ? 8 : 12}>
+              <Col xs={selectedMachine ? 8 : 12}>
                 <MachinesGrid machines={this.props.machines}
+                              dispatch={this.props.dispatch}
                               searchString={this.props.search}
-                              onRowSelect={this.onRowSelect} />
+                              onRowSelect={this.onRowSelect}
+                              selectedMachine={selectedMachine} />
               </Col>
-              {this.isMachineSelected() ?  
-                <Col xs={this.isMachineSelected() ? 4 : 0}>
+              {selectedMachine ?  
+                <Col xs={selectedMachine ? 4 : 0}>
                   <AutoAffix container={this} viewportOffsetTop={15}>
                     <div>
-                      <MachineForm machine={this.selectedMachine()}
+                      <MachineForm machine={selectedMachine}
                                    onSaveMachine={this.onSaveMachine} />
                     </div>
                   </AutoAffix>
@@ -151,6 +172,12 @@ class App extends Component {
         </div>
       </div>
     );
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!this.selectedMachine(this.props.machines)) {
+      this.props.dispatch(updateSelectedMachine(null))
+    }
   }
 }
 

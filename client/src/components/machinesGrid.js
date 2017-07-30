@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, applyGridConfig } from 'react-redux-grid';
+import { Grid, applyGridConfig, Actions as GridActions } from 'react-redux-grid';
 
 import './MachinesGrid.css';
 
@@ -67,7 +67,8 @@ class MachinesGrid extends Component {
 
   gridEvents() {
     return {
-      HANDLE_CELL_CLICK: this.onRowClick.bind(this)
+      // HANDLE_CELL_CLICK: this.onRowClick.bind(this),
+      HANDLE_AFTER_SELECTION: this.onRowSelection.bind(this)
     }
   }
 
@@ -91,9 +92,20 @@ class MachinesGrid extends Component {
   }
 
   render() {
+    const records = this.gridRecords()
+    if (this.props.selectedMachine && this.props.selectedMachine._key) {
+      setTimeout(() => {
+        this.props.dispatch(GridActions.SelectionActions.selectAll({stateKey: 'machines-grid', data: {currentRecords: [this.props.selectedMachine]}}))
+      }, 100)
+    }
+
+    setTimeout(() => {
+      // this.props.dispatch({type: '@@react-redux-grid/SELECT_ALL', selection: {'row-0': true}, stateKey: 'machines-grid', indexes: [5]})
+      // this.props.dispatch(GridActions.SelectionActions.selectAll({stateKey: 'machines-grid', data: {currentRecords: [this.gridRecords()[0]]}}))
+    }, 3000)
     return (
       <Grid stateKey='machines-grid'
-            data={this.gridRecords()}
+            data={records}
             columns={this.gridColumns()}
             plugins={this.gridPlugins()}
             events={this.gridEvents()}
@@ -101,8 +113,8 @@ class MachinesGrid extends Component {
     )
   }
 
-  onRowClick({row}) {
-    this.props.onRowSelect(row.id)
+  onRowSelection({data}) {
+    this.props.onRowSelect(data.id)
   }
 }
 
