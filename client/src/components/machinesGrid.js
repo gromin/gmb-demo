@@ -98,11 +98,6 @@ class MachinesGrid extends Component {
         this.props.dispatch(GridActions.SelectionActions.selectAll({stateKey: 'machines-grid', data: {currentRecords: [this.props.selectedMachine]}}))
       }, 100)
     }
-
-    setTimeout(() => {
-      // this.props.dispatch({type: '@@react-redux-grid/SELECT_ALL', selection: {'row-0': true}, stateKey: 'machines-grid', indexes: [5]})
-      // this.props.dispatch(GridActions.SelectionActions.selectAll({stateKey: 'machines-grid', data: {currentRecords: [this.gridRecords()[0]]}}))
-    }, 3000)
     return (
       <Grid stateKey='machines-grid'
             data={records}

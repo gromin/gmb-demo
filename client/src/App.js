@@ -173,12 +173,6 @@ class App extends Component {
       </div>
     );
   }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!this.selectedMachine(this.props.machines)) {
-      this.props.dispatch(updateSelectedMachine(null))
-    }
-  }
 }
 
 const mapStateToProps = state => {
