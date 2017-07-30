@@ -21,6 +21,13 @@ export function updateMachine(machine) {
   }
 }
 
+export function updateSelectedMachine(machineId) {
+  return {
+    type: 'UPDATE_SELECTED_MACHINE',
+    id: machineId
+  }
+}
+
 export function updateSearch(search) {
   return {
     type: 'SEARCH_UPDATE',

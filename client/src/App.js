@@ -5,13 +5,16 @@ import {
   loadMachines,
   updateGreeting,
   updateMachine,
+  updateSelectedMachine,
   updateSearch
 } from './actions'
 
 import { Grid, Col, Row } from 'react-bootstrap';
+import { AutoAffix } from 'react-overlays';
 import { Greeting } from './components/greeting';
-import { SearchBar } from './components/searchBar';
+import { MachineForm } from './components/machineForm';
 import { MachinesGrid } from './components/machinesGrid';
+import { SearchBar } from './components/searchBar';
 
 import './App.css';
 
@@ -25,6 +28,7 @@ class App extends Component {
     this.onSocketUpdate = this.onSocketUpdate.bind(this)
     this.onSaveMachine = this.onSaveMachine.bind(this)
     this.onSearchBarChange = this.onSearchBarChange.bind(this)
+    this.onRowSelect = this.onRowSelect.bind(this)
   }
 
   componentDidMount() {
@@ -90,42 +94,73 @@ class App extends Component {
     dispatch(updateSearch(value))
   }
 
-  isGridFullWidth() {
-    return true;
+  onRowSelect(machineId) {
+    const { dispatch } = this.props
+
+    dispatch(updateSelectedMachine(machineId))
+  }
+
+  isMachineSelected() {
+    return this.props.selectedMachine;
+  }
+
+  selectedMachine() {
+    const selectedMachine = this.props.machines.find((machine) => machine.id === this.props.selectedMachine)
+    return selectedMachine
   }
 
   render() {
     return (
-      <div className="App container">
-        <Grid>
-          <Row>
-            <Col xs={12} md={12}>
-              <Greeting text={this.props.greeting.fromApi} />
-              <Greeting text={this.props.greeting.fromWebsocket} />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
-              <SearchBar onChange={this.onSearchBarChange} />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={this.isGridFullWidth() ? 12 : 8}>
-              <MachinesGrid machines={this.props.machines} searchString={this.props.search} onSaveMachine={this.onSaveMachine} />
-            </Col>
-          </Row>
-        </Grid>
+      <div className="App">
+        <div className="container">
+          <Grid>
+            <Row>
+              <Col xs={12} md={12}>
+                <Greeting text={this.props.greeting.fromApi} />
+                <Greeting text={this.props.greeting.fromWebsocket} />
+              </Col>
+            </Row>
+          </Grid>
+        </div>
+        <div className="container">
+          <Grid>
+            <Row>
+              <Col xs={12} md={12}>
+                <SearchBar onChange={this.onSearchBarChange} />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={this.isMachineSelected() ? 8 : 12}>
+                <MachinesGrid machines={this.props.machines}
+                              searchString={this.props.search}
+                              onRowSelect={this.onRowSelect} />
+              </Col>
+              {this.isMachineSelected() ?  
+                <Col xs={this.isMachineSelected() ? 4 : 0}>
+                  <AutoAffix container={this} viewportOffsetTop={15}>
+                    <div>
+                      <MachineForm machine={this.selectedMachine()}
+                                   onSaveMachine={this.onSaveMachine} />
+                    </div>
+                  </AutoAffix>
+                </Col>
+                :
+                null}
+            </Row>
+          </Grid>
+        </div>
       </div>
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { greeting, socketGreeting, machines, search } = state
+  const { greeting, socketGreeting, machines, search, selectedMachine } = state
   return {
     greeting,
     socketGreeting,
     machines,
+    selectedMachine,
     search
   }
 }
@@ -136,6 +171,7 @@ const mapDispatchToProps = dispatch => {
     loadMachines,
     updateGreeting,
     updateMachine,
+    updateSelectedMachine,
     updateSearch
   }
 }

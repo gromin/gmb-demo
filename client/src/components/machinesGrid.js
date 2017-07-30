@@ -7,36 +7,35 @@ class MachinesGrid extends Component {
   constructor(props) {
     super(props)
     applyGridConfig({
+      CSS_PREFIX: '',
       CLASS_NAMES: {
         CONTAINER: '',
-        TABLE: 'table xtable-condensed table-striped table-bordered table-hover',
-        // TABLE_CONTAINER: 'table-container',
-        // HEADER_FIXED_CONTAINER: 'hidden',
-        // HEADER: 'hidden',
+        TABLE: 'table table-striped table-bordered table-hover',
         HEADER_HIDDEN: 'header-hidden',
         ROW: 'row-override',
         CELL: 'text-left',
-        // COLUMN: 'column',
-        // PAGERTOOLBAR: 'text-right bootstrap-description',
-        // BUTTONS: {
-        //   PAGER: 'btn pull-left negative-margin'
-        // },
         ERROR_HANDLER: {
           CONTAINER: 'hidden'
         }
-      },
-      CSS_PREFIX: ''
+      }
     })
   }
 
   gridColumns() {
     return [
       {
-        name: 'id',
+        name: 'Machine ID',
         dataIndex: 'id',
         sortable: true,
         editable: false,
         width: '15%'
+      },
+      {
+        name: 'IP Address',
+        dataIndex: 'ip',
+        sortable: true,
+        editable: false,
+        width: '25%'
       },
       {
         name: 'Machine name',
@@ -45,13 +44,6 @@ class MachinesGrid extends Component {
         editable: true,
         editor: '<input type="text" required />',
         width: '20%'
-      },
-      {
-        name: 'IP',
-        dataIndex: 'ip',
-        sortable: true,
-        editable: false,
-        width: '25%'
       },
       {
         name: 'Owner',
@@ -66,13 +58,7 @@ class MachinesGrid extends Component {
 
   gridPlugins() {
     return {
-      // EDITOR: {
-      //   type: 'inline',
-      //   enabled: true,
-      //   focusOnEdit: true
-      // },
       SELECTION_MODEL: {
-        // editEvent: 'doubleclick',
         activeCls: 'info',
         allowDeselect: false
       }
@@ -81,7 +67,7 @@ class MachinesGrid extends Component {
 
   gridEvents() {
     return {
-      HANDLE_AFTER_INLINE_EDITOR_SAVE: this.onEditSave.bind(this)
+      HANDLE_CELL_CLICK: this.onRowClick.bind(this)
     }
   }
 
@@ -102,7 +88,6 @@ class MachinesGrid extends Component {
         )
       })
     }
-    
   }
 
   render() {
@@ -111,12 +96,13 @@ class MachinesGrid extends Component {
             data={this.gridRecords()}
             columns={this.gridColumns()}
             plugins={this.gridPlugins()}
-            events={this.gridEvents()} />
+            events={this.gridEvents()}
+            height={null} />
     )
   }
 
-  onEditSave({values}) {
-    this.props.onSaveMachine(values)
+  onRowClick({row}) {
+    this.props.onRowSelect(row.id)
   }
 }
 
