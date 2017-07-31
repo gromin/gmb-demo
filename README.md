@@ -15,6 +15,10 @@ docker-compose up
 
 Then, open in browser http://localhost:3000, and in incognito mode http://localhost:3000.
 
+Log in using one of predefined accounts: `writer@example.com / writer` or `reader@example.com / reader`.
+
+Doubleclick on row to see its more detailed card. Account `writer@example.com` can use this card to edit machine's properties. Account `reader@example.com` can see this card in readonly mode.
+
 Changes made to records in one browser should be seen immediately in another.
 
 ## Features and Known Issues
@@ -33,11 +37,11 @@ Data is random and generated on every server restart by faker.
 * react
 * redux
 * react-redux-grid: powerful table view a.k.a. grid
+* react-bootstrap
+* react-overlays
 
 ## ToDo
 
-* Auth with roles
+* Add loading states to UI
 * Remote search or smart local search
-* Editable card for each record on doubleclick
 * Persistent store (redis? mongo? postgres?)
-* Prettify UI and add loading states
