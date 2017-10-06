@@ -2,7 +2,7 @@
 
 Git.
 
-Docker, including `docker-machine` and `docker-compose`, set up and running.
+Docker, including `docker-machine` and `docker-compose`, set up and running. (Guaranteed to work under Docker for Mac. Currently don't properly start up under Linux--need to fix mounted volumes.)
 
 ## Installation
 
